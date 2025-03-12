@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lord of the Rings</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="indexstyle.css">
 </head>
 <body>
 <!-- saati login classının dışına yazabilir misin ayrı bir bölüm gibi -->
@@ -26,51 +26,7 @@
         <div class="oval"></div>
     </label>
 </div>
-
-<script>
-    // Canlı saat göstergesi
-    function updateClock() {
-        const clockElement = document.getElementById('clock');
-        const now = new Date();
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        const seconds = String(now.getSeconds()).padStart(2, '0');
-        clockElement.textContent = `${hours}:${minutes}:${seconds}`;
-    }
-    setInterval(updateClock, 1000);
-    updateClock();
-    // 'H' tuşuna basıldığında web sitesindeki tüm HTML formlarının gizlendiği ve tekrar basıldığında bunların yeniden görüntülendiği bir özellik uygulayın.
-    // 'H' tuşuna basıldığında login div'ini gizle/göster
-    // h tuşuna basıldığında direkt bütün div class kapanması lazım.
-    let loginVisible = true;
-    document.addEventListener('keydown', (event) => {
-        const isInputFocused = document.activeElement.tagName === 'INPUT'; // Kullanıcı adı ya da şifre alanına odaklanıldığını kontrol et
-        if (!isInputFocused && event.key.toLowerCase() === 'h') {
-            const loginDiv = document.querySelector('.login');
-            loginVisible = !loginVisible;
-            loginDiv.style.display = loginVisible ? '' : 'none';
-        }
-    });
-
-    // Kullanıcı adı ve şifreyi saklamak için bir array
-    const usersArray = [];
-    // JavaScript kullanarak, bir kullanıcı oturum açmaya çalıştığında ve oturum açma düğmesine tıkladığında kullanıcı adı ve parolası arka planda bir dizide saklanacak şekilde oturum açma ekranını değiştirin. Ardından,
-    // bu dizinin tüm öğelerini konsola yazdırın
-    // Giriş yapma işlemi
-    document.getElementById('loginButton').addEventListener('click', () => {
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
-
-        if (username && password) {
-            usersArray.push({ username: username, password: password });
-            console.log(usersArray);
-            document.getElementById('username').value = '';
-            document.getElementById('password').value = '';
-        } else {
-            alert('Kullanıcı adı ve şifreyi doldurduğunuzdan emin olun.');
-        }
-    });
-</script>
+<script src="indexscript.js"></script>
 
 </body>
 </html>

@@ -1,0 +1,39 @@
+<!-- This page should include: o A class information input form with the following fields: ▪ Class Name ▪ Number of People ▪ Description o A class table that displays the entered class information, showing the above details for each entry.-->
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class Information</title>
+    <link rel="stylesheet" href="tablestyle.css">
+</head>
+<body>
+    <!-- Class Information Form -->
+    <div class="form-container">
+        <h2>Class Information</h2>
+        <form id="classForm">
+            <input type="text" id="className" placeholder="Class Name" required>
+            <input type="number" id="numPeople" placeholder="Number of People" required>
+            <textarea id="classDescription" placeholder="Class Description" required></textarea>
+            <button type="submit" id="submitBtn">Submit</button>
+        </form>
+    </div>
+
+    <!-- Class Information Table -->
+    <table id="classTable">
+        <thead>
+            <tr>
+                <th>Class Name</th>
+                <th>Number of People</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Dynamic rows will be inserted here -->
+        </tbody>
+    </table>
+
+    <script src="tablescript.js"></script>
+</body>
+</html>

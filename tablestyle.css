@@ -1,0 +1,121 @@
+/* indexstyle.css dosyamdaki tarza uygun şekilde tablestyle.css dosyasının içini doldur. bu sayfa bir tablo formu ve tablo içerecek. Lord of the Rings i dizayn et. ablestyle.css */
+
+@font-face {
+    font-family: 'MoonDance';
+    src: url('MoonDance-Regular.ttf') format('truetype');
+}
+
+body {
+    font-family: 'MoonDance', sans-serif;
+    background-color: black;
+    color: rgba(224, 137, 31, 0.7);
+    margin: 0;
+    padding: 20px;
+    min-height: 100vh;
+}
+
+.form-container {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 30px;
+    background-color: rgba(0, 0, 0, 0.8);
+    border: 2px solid rgba(224, 137, 31, 0.7);
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(255, 190, 80, 0.3);
+}
+
+h2 {
+    text-align: center;
+    color: rgba(224, 137, 31, 0.9);
+    text-shadow: 0 0 10px rgba(255, 190, 80, 0.5);
+    margin-bottom: 30px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+input, textarea {
+    padding: 12px;
+    background-color: #222;
+    border: 2px solid rgba(224, 137, 31, 0.7);
+    border-radius: 5px;
+    color: rgba(224, 137, 31, 0.7);
+    font-family: 'MoonDance', sans-serif;
+    font-size: 16px;
+}
+
+input::placeholder, textarea::placeholder {
+    color: rgba(224, 137, 31, 0.5);
+}
+
+textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+button {
+    padding: 12px;
+    background-color: transparent;
+    border: 2px solid rgba(224, 137, 31, 0.7);
+    border-radius: 50px;
+    color: rgba(224, 137, 31, 0.7);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'MoonDance', sans-serif;
+    font-size: 18px;
+    text-transform: uppercase;
+}
+
+button:hover {
+    background-color: rgba(224, 137, 31, 0.2);
+    box-shadow: 0 0 15px rgba(255, 190, 80, 0.5);
+    transform: scale(1.02);
+}
+
+/* Table Styles */
+table {
+    width: 100%;
+    margin-top: 40px;
+    border-collapse: separate;
+    border-spacing: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(255, 190, 80, 0.2);
+}
+
+th, td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid rgba(224, 137, 31, 0.3);
+}
+
+th {
+    background-color: rgba(224, 137, 31, 0.2);
+    color: rgba(224, 137, 31, 0.9);
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+tr:hover {
+    background-color: rgba(224, 137, 31, 0.1);
+}
+
+/* Animation for new rows */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+tbody tr {
+    animation: fadeIn 0.5s ease-out forwards;
+}
