@@ -8,26 +8,56 @@ namespace LabProject.Pages
 {
     public class IndexModel : PageModel
     {
-         public static List<ClassInformationModel> Classes { get; set; } = new List<ClassInformationModel>();
+        // Static list to act as an in-memory database
+        public static List<ClassInformationModel> Classes { get; set; } = new List<ClassInformationModel>();
 
-    [BindProperty]
-    public ClassInformationModel NewClass { get; set; }
+        [BindProperty]
+        public ClassInformationModel NewClass { get; set; }
 
-    public IndexModel()
-    {
-        // Initialize NewClass to avoid the CS8618 error
-        NewClass = new ClassInformationModel();
-    }
+        [BindProperty(SupportsGet = true)]
+        public string Filter { get; set; } // Filter string for ClassName
+
+        [BindProperty(SupportsGet = true)]
+        public int PageNumber { get; set; } = 1; // Current page number
+
+        public int PageSize { get; set; } = 10; // Number of items per page
+        public int TotalPages { get; set; } // Total number of pages
+
+        public List<ClassInformationModel> FilteredClasses { get; set; } // Filtered and paginated list
+
+        public IndexModel()
+        {
+            // Initialize NewClass to avoid the CS8618 error
+            NewClass = new ClassInformationModel();
+            Filter = string.Empty; // Initialize Filter to an empty string
+            FilteredClasses = new List<ClassInformationModel>(); // Initialize FilteredClasses to an empty list
+        }
 
         // OnGet method to initialize the page
         public void OnGet()
         {
-            // Optional: Pre-fill with some initial data if desired
+            // Generate synthetic data if the list is empty
             if (!Classes.Any())
             {
-                Classes.Add(new ClassInformationModel { Id = 1, ClassName = "Math", StudentCount = 30, Description = "Basic Math" });
-                Classes.Add(new ClassInformationModel { Id = 2, ClassName = "Science", StudentCount = 25, Description = "Intro to Science" });
+                GenerateSyntheticData();
             }
+
+            // Filter the list based on the Filter string
+            var query = Classes.AsQueryable();
+            if (!string.IsNullOrEmpty(Filter))
+            {
+                query = query.Where(c => c.ClassName.Contains(Filter, System.StringComparison.OrdinalIgnoreCase));
+            }
+
+            // Calculate total pages
+            int totalItems = query.Count();
+            TotalPages = (int)System.Math.Ceiling(totalItems / (double)PageSize);
+
+            // Apply pagination
+            FilteredClasses = query
+                .Skip((PageNumber - 1) * PageSize)
+                .Take(PageSize)
+                .ToList();
         }
 
         // OnPostAdd to handle form submission for adding a new class
@@ -84,22 +114,33 @@ namespace LabProject.Pages
 
             return RedirectToPage(); // Refresh the page after saving
         }
+
+        // Method to generate synthetic data
+        private void GenerateSyntheticData()
+        {
+            for (int i = 1; i <= 100; i++)
+            {
+                Classes.Add(new ClassInformationModel
+                {
+                    Id = i,
+                    ClassName = $"Class {i}",
+                    StudentCount = i % 30 + 1, // Randomize student count between 1 and 30
+                    Description = $"Description for Class {i}"
+                });
+            }
+        }
     }
 }
-/* On the left side of the page, there will be a form that collects: Class Name Student Count Description On the right side, there will be a table that displays all the submitted class data. 
-The table will have the following columns: Id Class Name Student Count Description Actions (Edit and Delete)
-The data should be validated and added to a static list each time the form is submitted. 
-The data will then be displayed in the table.
 
-Step 4 – Requirements and Constraints
-• Use Bootstrap to create a responsive layout with two columns (form on the left, table on the
-right).
-• Use Razor Pages only; no JavaScript is allowed.
-• All operations (Add, Edit, Delete) must be handled using C# methods in the PageModel.
-• Form validation should be done using C# attributes like [Required], [Range], etc.
-• When editing, pre-fill the form with the selected item's data.
-• After deletion or editing, refresh the page and update the table accordingly.
-Index.cshtml.cs dosyasında 
-Non-nullable property 'NewClass' must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring the property as nullable.CS8618 bu hatayın veriyor
+/* you will improve the table you created last week in your Razor Pages project. You
+will add filtering and pagination features. However, filtering will be done on the data list in
+the backend, not on the frontend.
+The filtering logic must be written inside the OnGet methods 
 
- */
+In addition to filtering, you are required to implement pagination. To properly test the
+pagination feature, you need to generate synthetic data. Make sure to create a list with at
+least 100 sample records so you can see how the pagination works across multiple pages.
+Tip :
+When a filter value changes, the form should submit automatically or the user should click a
+"Filter" button. This will trigger the OnGet method with the selected filter values passed as
+query parameters.*/

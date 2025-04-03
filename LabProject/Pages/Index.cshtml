@@ -6,39 +6,26 @@
 
 <div class="container">
     <div class="row">
-        <!-- Left Column: Form -->
-        <div class="col-md-6">
-            <h3>Add / Edit Class</h3>
-            <form method="post">
+        <!-- Filter Section -->
+        <div class="col-md-12 mb-3">
+            <form method="get" id="filterForm">
                 <div class="form-group">
-                    <label asp-for="NewClass.ClassName">Class Name</label>
-                    <input asp-for="NewClass.ClassName" class="form-control" />
-                    <span asp-validation-for="NewClass.ClassName" class="text-danger"></span>
+                    <label for="filter">Filter by Class Name:</label>
+                    <input type="text" id="filter" name="Filter" value="@Model.Filter" class="form-control" 
+                           onchange="document.getElementById('filterForm').submit();" />
                 </div>
-
-                <div class="form-group">
-                    <label asp-for="NewClass.StudentCount">Student Count</label>
-                    <input asp-for="NewClass.StudentCount" class="form-control" type="number" />
-                    <span asp-validation-for="NewClass.StudentCount" class="text-danger"></span>
-                </div>
-
-                <div class="form-group">
-                    <label asp-for="NewClass.Description">Description</label>
-                    <textarea asp-for="NewClass.Description" class="form-control"></textarea>
-                    <span asp-validation-for="NewClass.Description" class="text-danger"></span>
-                </div>
-
-                <button type="submit" asp-page-handler="Add" class="btn btn-primary">Add Class</button>
+                <button type="submit" class="btn btn-primary">Apply Filter</button>
             </form>
         </div>
+    </div>
 
-        <!-- Right Column: Table -->
-        <div class="col-md-6">
-            <h3>Classes List</h3>
-            <table class="table table-bordered">
+    <div class="row">
+        <!-- Table Section -->
+        <div class="col-md-12">
+            <h3>Class List</h3>
+            <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th>Id</th>
                         <th>Class Name</th>
                         <th>Student Count</th>
                         <th>Description</th>
@@ -46,20 +33,19 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in LabProject.Pages.IndexModel.Classes)
+                    @foreach (var classInfo in Model.FilteredClasses)
                     {
                         <tr>
-                            <td>@item.Id</td>
-                            <td>@item.ClassName</td>
-                            <td>@item.StudentCount</td>
-                            <td>@item.Description</td>
+                            <td>@classInfo.ClassName</td>
+                            <td>@classInfo.StudentCount</td>
+                            <td>@classInfo.Description</td>
                             <td>
                                 <form method="post" asp-page-handler="Edit">
-                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <input type="hidden" name="id" value="@classInfo.Id" />
                                     <button type="submit" class="btn btn-info">Edit</button>
                                 </form>
                                 <form method="post" asp-page-handler="Delete">
-                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <input type="hidden" name="id" value="@classInfo.Id" />
                                     <button type="submit" class="btn btn-danger">Delete</button>
                                 </form>
                             </td>
@@ -69,20 +55,46 @@
             </table>
         </div>
     </div>
-</div>
-<!-- On the left side of the page, there will be a form that collects: Class Name Student Count Description On the right side, there will be a table that displays all the submitted class data. 
-The table will have the following columns: Id Class Name Student Count Description Actions (Edit and Delete)
-The data should be validated and added to a static list each time the form is submitted. 
-The data will then be displayed in the table.
 
-Step 4 – Requirements and Constraints
-• Use Bootstrap to create a responsive layout with two columns (form on the left, table on the
-right).
-• Use Razor Pages only; no JavaScript is allowed.
-• All operations (Add, Edit, Delete) must be handled using C# methods in the PageModel.
-• Form validation should be done using C# attributes like [Required], [Range], etc.
-• When editing, pre-fill the form with the selected item's data.
-• After deletion or editing, refresh the page and update the table accordingly. 
-Index.cshtml dosyasında 
-Model.Classes bölümünde Member 'IndexModel.Classes' cannot be accessed with an instance reference; qualify it with a type name insteadCS0176 hatası veriyor
+    <div class="row">
+        <!-- Pagination Section -->
+        <div class="col-md-12">
+            <nav>
+                <ul class="pagination">
+                    @if (Model.PageNumber > 1)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" asp-page="./Index" asp-route-PageNumber="@(Model.PageNumber - 1)" asp-route-Filter="@Model.Filter">Previous</a>
+                        </li>
+                    }
+                    @for (int i = 1; i <= Model.TotalPages; i++)
+                    {
+                        <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                            <a class="page-link" asp-page="./Index" asp-route-PageNumber="@i" asp-route-Filter="@Model.Filter">@i</a>
+                        </li>
+                    }
+                    @if (Model.PageNumber < Model.TotalPages)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" asp-page="./Index" asp-route-PageNumber="@(Model.PageNumber + 1)" asp-route-Filter="@Model.Filter">Next</a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<!-- you will improve the table you created last week in your Razor Pages project. You
+will add filtering and pagination features. However, filtering will be done on the data list in
+the backend, not on the frontend.
+The filtering logic must be written inside the OnGet methods 
+
+In addition to filtering, you are required to implement pagination. To properly test the
+pagination feature, you need to generate synthetic data. Make sure to create a list with at
+least 100 sample records so you can see how the pagination works across multiple pages.
+Tip :
+When a filter value changes, the form should submit automatically or the user should click a
+"Filter" button. This will trigger the OnGet method with the selected filter values passed as
+query parameters.
 -->
