@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 
 namespace LabProject.Pages
 {
@@ -34,8 +35,11 @@ namespace LabProject.Pages
         }
 
         // OnGet method to initialize the page
-        public void OnGet()
+        public void OnGet(string filter = "", int pageNumber = 1)
         {
+            Filter = filter;
+            PageNumber = pageNumber;
+
             // Generate synthetic data if the list is empty
             if (!Classes.Any())
             {
@@ -113,6 +117,48 @@ namespace LabProject.Pages
             }
 
             return RedirectToPage(); // Refresh the page after saving
+        }
+
+        // OnPostExport to export selected classes to a JSON file
+        public IActionResult OnPostExport(List<int> SelectedClasses)
+        {
+            // If no classes are selected, export all classes on the current page
+            var classesToExport = SelectedClasses?.Any() == true
+                ? FilteredClasses.Where(c => SelectedClasses.Contains(c.Id)).ToList()
+                : FilteredClasses;
+
+            // Use Utils to serialize the data to JSON
+            var json = LabProject.Helpers.Utils.Instance.ExportToJson(classesToExport);
+
+            var fileName = "exported_classes.json";
+            return File(System.Text.Encoding.UTF8.GetBytes(json), "application/json", fileName);
+        }
+
+        public IActionResult OnPostExport(string ExportMode, List<string> SelectedColumns)
+        {
+            // Determine the data to export based on the mode
+            var dataToExport = ExportMode == "Filtered" ? FilteredClasses : Classes;
+
+            // If no columns are selected, export all columns
+            if (SelectedColumns == null || !SelectedColumns.Any())
+            {
+                var json = Utils.Instance.ExportToJson(dataToExport);
+                return File(System.Text.Encoding.UTF8.GetBytes(json), "application/json", "exported_classes.json");
+            }
+
+            // Filter the data to include only the selected columns
+            var filteredData = dataToExport.Select(item =>
+            {
+                var result = new Dictionary<string, object>();
+                if (SelectedColumns.Contains("ClassName")) result["ClassName"] = item.ClassName;
+                if (SelectedColumns.Contains("StudentCount")) result["StudentCount"] = item.StudentCount;
+                if (SelectedColumns.Contains("Description")) result["Description"] = item.Description;
+                return result;
+            }).ToList();
+
+            // Export the filtered data
+            var filteredJson = Utils.Instance.ExportToJson(filteredData);
+            return File(System.Text.Encoding.UTF8.GetBytes(filteredJson), "application/json", "exported_filtered_classes.json");
         }
 
         // Method to generate synthetic data

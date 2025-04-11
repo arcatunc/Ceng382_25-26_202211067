@@ -20,39 +20,71 @@
     </div>
 
     <div class="row">
+        <!-- Export Options Section -->
+        <div class="col-md-12 mb-3">
+            <h4>Export Options</h4>
+            <form method="post" asp-page-handler="Export" id="exportForm">
+                <div class="form-group">
+                    <label>Select Columns to Export:</label>
+                    <div>
+                        <label>
+                            <input type="checkbox" name="SelectedColumns" value="ClassName" /> Class Name
+                        </label>
+                        <label>
+                            <input type="checkbox" name="SelectedColumns" value="StudentCount" /> Student Count
+                        </label>
+                        <label>
+                            <input type="checkbox" name="SelectedColumns" value="Description" /> Description
+                        </label>
+                    </div>
+                </div>
+                <button type="submit" name="ExportMode" value="Filtered" class="btn btn-primary">Export Filtered</button>
+                <button type="submit" name="ExportMode" value="Unfiltered" class="btn btn-secondary">Export All</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
         <!-- Table Section -->
         <div class="col-md-12">
             <h3>Class List</h3>
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Class Name</th>
-                        <th>Student Count</th>
-                        <th>Description</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var classInfo in Model.FilteredClasses)
-                    {
+            <form method="post" asp-page-handler="Export" id="exportForm">
+                <table class="table table-striped">
+                    <thead>
                         <tr>
-                            <td>@classInfo.ClassName</td>
-                            <td>@classInfo.StudentCount</td>
-                            <td>@classInfo.Description</td>
-                            <td>
-                                <form method="post" asp-page-handler="Edit">
-                                    <input type="hidden" name="id" value="@classInfo.Id" />
-                                    <button type="submit" class="btn btn-info">Edit</button>
-                                </form>
-                                <form method="post" asp-page-handler="Delete">
-                                    <input type="hidden" name="id" value="@classInfo.Id" />
-                                    <button type="submit" class="btn btn-danger">Delete</button>
-                                </form>
-                            </td>
+                            <th><input type="checkbox" id="selectAll" onclick="toggleSelectAll()" /></th>
+                            <th>Class Name</th>
+                            <th>Student Count</th>
+                            <th>Description</th>
+                            <th>Actions</th>
                         </tr>
-                    }
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach (var classInfo in Model.FilteredClasses)
+                        {
+                            <tr>
+                                <td>
+                                    <input type="checkbox" name="SelectedClasses" value="@classInfo.Id" class="class-checkbox" />
+                                </td>
+                                <td>@classInfo.ClassName</td>
+                                <td>@classInfo.StudentCount</td>
+                                <td>@classInfo.Description</td>
+                                <td>
+                                    <form method="post" asp-page-handler="Edit">
+                                        <input type="hidden" name="id" value="@classInfo.Id" />
+                                        <button type="submit" class="btn btn-info">Edit</button>
+                                    </form>
+                                    <form method="post" asp-page-handler="Delete">
+                                        <input type="hidden" name="id" value="@classInfo.Id" />
+                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <button type="submit" class="btn btn-success">Export Selected</button>
+            </form>
         </div>
     </div>
 
@@ -84,6 +116,14 @@
         </div>
     </div>
 </div>
+
+<script>
+    function toggleSelectAll() {
+        const checkboxes = document.querySelectorAll('.class-checkbox');
+        const selectAll = document.getElementById('selectAll');
+        checkboxes.forEach(checkbox => checkbox.checked = selectAll.checked);
+    }
+</script>
 
 <!-- you will improve the table you created last week in your Razor Pages project. You
 will add filtering and pagination features. However, filtering will be done on the data list in
